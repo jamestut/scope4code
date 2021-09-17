@@ -1,22 +1,22 @@
 {
   "name": "codescope",
-  "displayName": "scope4code",
+  "displayName": "scope4code (james mod)",
   "description": "cscope for vs code",
-  "version": "0.2.0",
-  "publisher": "xulion",
+  "version": "0.2.0-mod-2",
+  "publisher": "jamestut",
   "engines": {
     "vscode": "^1.34.0"
   },
   "license": "SEE LICENSE IN LICENSE",
   "bugs": {
-    "url": "https://github.com/xulion/scope4code/issues",
-    "email": "xulion.xulion@gmail.com"
+    "url": "https://github.com/jamestut/scope4code/issues",
+    "email": "j1@ionbox.in"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/xulion/scope4code"
+    "url": "https://github.com/jamestut/scope4code"
   },
-  "homepage": "https://github.com/xulion/scope4code/blob/master/README.md",
+  "homepage": "https://github.com/jamestut/scope4code/blob/master/README.md",
   "categories": [
     "Programming Languages",
     "Other"
