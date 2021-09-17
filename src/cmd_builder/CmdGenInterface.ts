@@ -1,6 +1,7 @@
 'use strict';
 
 export default interface CmdGenInterface {
+    updateConfig(cscop_config : object);
     checkToolCmd() : string;
     listFileCmd() : string;
     buildDatabaseCmd() : string;

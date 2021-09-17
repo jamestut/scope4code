@@ -62,7 +62,7 @@ export function activate(context: vscode.ExtensionContext) {
     let enableScope = false;
 
     if (vscode.workspace.rootPath) {
-        ext_config = new ExtensionConfig(vscode.workspace.rootPath);
+        ext_config = new ExtensionConfig(configChangeCallback, vscode.workspace.rootPath);
         enableScope = ext_config.enabled();
     }
 
@@ -127,6 +127,10 @@ export function activate(context: vscode.ExtensionContext) {
         //to update status bar
         executor.verifyCscope();
     }
+}
+
+function configChangeCallback() {
+    executor.updateConfig();
 }
 
 function validateConfiguration(configuration:any) {

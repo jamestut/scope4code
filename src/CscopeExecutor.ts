@@ -30,12 +30,10 @@ export default class CscopeExecutor {
     executorBusy : boolean;
     scopeEngine : ScopeEngine;
     scopConfig : ExtensionConfig;
-    userDefinedCmds : object;
 
     constructor(scope_config : ExtensionConfig, out:OutputInterface) {
         this.sourcePaths = scope_config.getSourcePaths();
         this.databasePath = scope_config.getDatabasePath();
-        this.userDefinedCmds = scope_config.getEngineCmdStrings();
         this.outInf = out;
         this.executorBusy = false;
         this.scopConfig = scope_config;
@@ -45,8 +43,7 @@ export default class CscopeExecutor {
             env :process.env
         }
 
-        this.scopeEngine = new ScopeEngine(this.sourcePaths, 
-            this.userDefinedCmds, scope_config.getPrintCmd() ? out : null);
+        this.scopeEngine = new ScopeEngine(this.sourcePaths, scope_config.getPrintCmd() ? out : null);
     }
 
     private databaseReady():boolean {
@@ -58,6 +55,10 @@ export default class CscopeExecutor {
             console.log(err.toString());
             return false;
         }
+    }
+
+    public updateConfig() {
+        this.scopeEngine.doUpdateCmdGenerator();
     }
 
     public async checkTool():Promise<boolean> {

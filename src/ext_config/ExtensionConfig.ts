@@ -9,6 +9,7 @@ export default class ExtensionConfig {
     private lastError : string = "";
     private workspacePath : string = "";
     private _workspaceConfig : vscode.WorkspaceConfiguration = null;
+    private configChangeCallback = null;
     
     private get workspaceConfig() : vscode.WorkspaceConfiguration {
         if (!this._workspaceConfig) {
@@ -17,7 +18,7 @@ export default class ExtensionConfig {
         return this._workspaceConfig;
     }
 
-    public constructor(workspace_path : string)
+    public constructor(config_change_cb, workspace_path : string)
     {
         this.workspacePath = workspace_path;
         let wsConfig = this.workspaceConfig;
@@ -25,11 +26,15 @@ export default class ExtensionConfig {
             this.extEnabled = wsConfig.get(config_field_str.SCOPE_ENABLE);
         }
         vscode.workspace.onDidChangeConfiguration((e) => this.didChangeConfigurationListener(e));
+        this.configChangeCallback = config_change_cb;
     }
 
     private didChangeConfigurationListener(evt : vscode.ConfigurationChangeEvent) {
         if (evt.affectsConfiguration('scope4code')) {
             this._workspaceConfig = null;
+            if (this.configChangeCallback) {
+                this.configChangeCallback();
+            }
         }
     }
 

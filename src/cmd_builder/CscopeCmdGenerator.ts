@@ -26,6 +26,10 @@ export default class CscopeCmdGenerator implements CmdGenInterface {
         this.cscopeConfig = cscop_config;
     }
 
+    public updateConfig(cscop_config : object) {
+        this.cscopeConfig = cscop_config;
+    }
+
     private getConfig() : any {
         let cmd_config = this.cscopeConfig.config[0];
         switch (this.os_type)
