@@ -8,4 +8,5 @@ This is my personal modification of this extension to better suit my need. Follo
   - Create the aforementioned folder during database build.
 - Removed cscope readiness check upon extension startup.
 - Can change `databasePath` without having to reload window.
+- Add `-d` to the default `cscope` command. This prevents cscope from rebuilding the database when the source file changes (rebuilds can always be done manually).
 
