@@ -85,18 +85,7 @@ export default class CscopeExecutor {
     }
 
     public async verifyCscope():Promise<boolean> {
-        if (!await this.checkTool()) {
-            this.outInf.updateState("not detected");
-            this.outInf.errorToUser("cscope is not installed (or not added to PATH)");                
-            return false;
-        }
-
-        if (!this.databaseReady()) {
-            this.outInf.updateState("no database");
-            return false;
-        }
-
-        this.outInf.updateState("database ready");
+        this.outInf.updateState("ready");
 
         return true;
     }

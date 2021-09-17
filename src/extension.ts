@@ -4,6 +4,7 @@
 import * as vscode from 'vscode';
 const spawnSync = require('child_process').spawnSync;
 const fs = require('fs');
+const mkdirp = require('mkdirp');
 import {RefProvider} from './RefProvider';
 import {DefinitionProvider} from './DefinitionProvider';
 import CscopeExecutor from './CscopeExecutor';
@@ -79,22 +80,6 @@ export function activate(context: vscode.ExtensionContext) {
         const database_path = ext_config.getDatabasePath();
         process.env.PATH = ext_config.getExePath() + ":" + process.env.PATH;
         console.log(process.env.PATH);
-
-        try{
-            fs.accessSync(path.join(vscode.workspace.rootPath, ".vscode"), fs.constants.R_OK | fs.constants.W_OK)
-        }
-        catch{
-            out.diagLog(".vscode folder does not exist, creating new one");
-            fs.mkdirSync(path.join(vscode.workspace.rootPath, ".vscode"));
-        }
-
-        try{
-            fs.accessSync(database_path, fs.constants.R_OK | fs.constants.W_OK)
-        }
-        catch{
-            out.diagLog("cscope database folder does not exist, creating new one");
-            fs.mkdirSync(database_path);
-        }
     
         executor = new CscopeExecutor(ext_config, out);
         const searchResult = new SearchResultProvider(executor);
@@ -160,6 +145,13 @@ async function buildDataBase()
     const sourcePaths = ext_config.getSourcePaths();
 
     const database_path = ext_config.getDatabasePath();
+    // check and create directories if needed
+    try{
+        fs.accessSync(database_path, fs.constants.R_OK | fs.constants.W_OK)
+    }
+    catch{
+        await mkdirp(database_path);
+    }
 
     let paths = [];
     sourcePaths.forEach((path) => {
