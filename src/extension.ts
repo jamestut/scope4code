@@ -18,7 +18,7 @@ function get_config_path() : string {
 };
 
 let status = null;
-let ext_config : ExtensionConfig = null;
+export let ext_config : ExtensionConfig = null;
 let executor : CscopeExecutor = null;
 
 function updateStatus(text) {
@@ -62,8 +62,7 @@ export function activate(context: vscode.ExtensionContext) {
     let enableScope = false;
 
     if (vscode.workspace.rootPath) {
-        const myconfig = vscode.workspace.getConfiguration('scope4code');
-        ext_config = new ExtensionConfig(myconfig, vscode.workspace.rootPath);
+        ext_config = new ExtensionConfig(vscode.workspace.rootPath);
         enableScope = ext_config.enabled();
     }
 

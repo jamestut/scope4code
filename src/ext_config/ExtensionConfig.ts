@@ -8,17 +8,29 @@ export default class ExtensionConfig {
     private extEnabled : boolean = true;
     private lastError : string = "";
     private workspacePath : string = "";
-    private workspaceConfig : vscode.WorkspaceConfiguration = null;
+    private _workspaceConfig : vscode.WorkspaceConfiguration = null;
+    
+    private get workspaceConfig() : vscode.WorkspaceConfiguration {
+        if (!this._workspaceConfig) {
+            this._workspaceConfig = vscode.workspace.getConfiguration('scope4code');
+        }
+        return this._workspaceConfig;
+    }
 
-    constructor(workspace_config : vscode.WorkspaceConfiguration, 
-        workspace_path : string)
+    public constructor(workspace_path : string)
     {
         this.workspacePath = workspace_path;
-        if (workspace_config.has(config_field_str.SCOPE_ENABLE)) {
-            this.extEnabled = workspace_config.get(config_field_str.SCOPE_ENABLE);
+        let wsConfig = this.workspaceConfig;
+        if (wsConfig.has(config_field_str.SCOPE_ENABLE)) {
+            this.extEnabled = wsConfig.get(config_field_str.SCOPE_ENABLE);
         }
-    
-        this.workspaceConfig = workspace_config;
+        vscode.workspace.onDidChangeConfiguration((e) => this.didChangeConfigurationListener(e));
+    }
+
+    private didChangeConfigurationListener(evt : vscode.ConfigurationChangeEvent) {
+        if (evt.affectsConfiguration('scope4code')) {
+            this._workspaceConfig = null;
+        }
     }
 
     private filterPathString(raw_path : string, special_string : string, target_string : string) : string {
@@ -30,6 +42,7 @@ export default class ExtensionConfig {
     }
 
     public enabled() : boolean {
+        let wsConfig = this.workspaceConfig;
         if (this.workspaceConfig.has(config_field_str.SCOPE_ENABLE)) {
             this.extEnabled = this.workspaceConfig.get(config_field_str.SCOPE_ENABLE);
         }

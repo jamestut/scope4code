@@ -7,4 +7,5 @@ This is my personal modification of this extension to better suit my need. Follo
 - Do not automatically create `.vscode/cscope` folder upon extension startup.
   - Create the aforementioned folder during database build.
 - Removed cscope readiness check upon extension startup.
+- Can change `databasePath` without having to reload window.
 

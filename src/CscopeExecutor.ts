@@ -45,7 +45,7 @@ export default class CscopeExecutor {
             env :process.env
         }
 
-        this.scopeEngine = new ScopeEngine(this.sourcePaths, this.databasePath, 
+        this.scopeEngine = new ScopeEngine(this.sourcePaths, 
             this.userDefinedCmds, scope_config.getPrintCmd() ? out : null);
     }
 
@@ -120,7 +120,7 @@ export default class CscopeExecutor {
                 this.sourcePaths = this.scopConfig.getSourcePaths();
                 this.databasePath = this.scopConfig.getDatabasePath();
 
-                this.scopeEngine.updatePaths(this.sourcePaths, this.databasePath);
+                this.scopeEngine.updatePaths(this.sourcePaths);
 
                 ret = await this.internal_buildDataBase();
                 if (!ret) {
