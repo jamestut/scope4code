@@ -7,15 +7,12 @@ import FindResultDoc from './FindResultDoc';
 export default class SearchResultProvider implements 
             vscode.TextDocumentContentProvider, vscode.DocumentLinkProvider{
     private executor:CscopeExecutor = null;
-    private docs: FindResultDoc[];
     
     constructor (executor : CscopeExecutor){
         this.executor = executor;
-        this.docs = [];
     }
 
     dispose() {
-        this.docs.length = 0;
     }
     
     static scheme = "search";
@@ -23,18 +20,10 @@ export default class SearchResultProvider implements
     private async getDoc(uri: vscode.Uri) : Promise<FindResultDoc>{
         let resultDoc = null;
 
-        for (let i = 0; i < this.docs.length; ++i){
-            if (this.docs[i].getUri() === uri.toString()) {
-                resultDoc = this.docs[i];
-                break;
-            }
-        }
-
         if (!resultDoc){
             const [briefText, symbol, functionIndex] = <[string, string, number]>JSON.parse(uri.query);
             const fileList = await this.executor.runSearch(symbol, functionIndex);
             resultDoc = new FindResultDoc(uri, fileList);
-            this.docs.push(resultDoc);
         }
         
         return resultDoc;
@@ -54,6 +43,22 @@ export default class SearchResultProvider implements
             this.getDoc(document.uri).then((resultDoc)=>{
                 resolve(resultDoc.getDocLinks());
             });
+        });
+    }
+
+    resolveDocumentLink(link: any, token: vscode.CancellationToken): vscode.ProviderResult<vscode.DocumentLink> {
+        const lineInfo : any = link.lineInfo;
+        const uri : vscode.Uri = vscode.Uri.file(lineInfo.fileName);
+        const viewColumn = vscode.window.activeTextEditor.viewColumn + 1;
+        vscode.window.showTextDocument(uri, {viewColumn:viewColumn, preserveFocus:false, preview:false}).then(editor => {
+            // positions are zero based for both line no. and col. no.
+            const pos = new vscode.Position(lineInfo.lineNum - 1, 0);
+            editor.selection = new vscode.Selection(pos, pos);
+            editor.revealRange(new vscode.Range(pos, pos));
+        });
+
+        return new Promise( (resolve, reject) => {
+            reject();
         });
     }
     

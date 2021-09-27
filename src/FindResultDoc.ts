@@ -22,8 +22,10 @@ export default class FindResultDoc {
             const fileInfo = line.fileName + ':' + line.lineNum;
             content += fileInfo + ` ${line.otherText}\n`;
             const linkRange = new vscode.Range(lineNum, 0, lineNum, fileInfo.length);
-            const linkTarget = vscode.Uri.parse(`file:${line.fileName}#${line.lineNum}`);
-            const docLink = new vscode.DocumentLink(linkRange, linkTarget);
+            // keep the target blank so we can use a custom function to open the document.
+            // this allows us to go to the line directly.
+            const docLink : any = new vscode.DocumentLink(linkRange);
+            docLink.lineInfo = line;
             this.links.push(docLink);
             lineNum++;
         });
