@@ -10,4 +10,5 @@ This is my personal modification of this extension to better suit my need. Follo
 - Can change `databasePath` without having to reload window.
 - Add `-d` to the default `cscope` command. This prevents cscope from rebuilding the database when the source file changes (rebuilds can always be done manually).
 - Can change cscope engine commands without having to reload window.
-
+- Search results now open in a new column and go straight to the referred line.
+- Search results no longer cached: always query cscope on every searches.
