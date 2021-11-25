@@ -4,28 +4,26 @@ import * as vscode from 'vscode';
 import CscopeExecutor from './CscopeExecutor';
 import FindResultDoc from './FindResultDoc';
 
-export default class SearchResultProvider implements 
+export default class SearchResultProvider implements
             vscode.TextDocumentContentProvider, vscode.DocumentLinkProvider{
     private executor:CscopeExecutor = null;
-    
+
     constructor (executor : CscopeExecutor){
         this.executor = executor;
     }
 
     dispose() {
     }
-    
+
     static scheme = "search";
 
     private async getDoc(uri: vscode.Uri) : Promise<FindResultDoc>{
         let resultDoc = null;
 
-        if (!resultDoc){
-            const [briefText, symbol, functionIndex] = <[string, string, number]>JSON.parse(uri.query);
-            const fileList = await this.executor.runSearch(symbol, functionIndex);
-            resultDoc = new FindResultDoc(uri, fileList);
-        }
-        
+        const [briefText, symbol, functionIndex, cacheBreaker] = <[string, string, number, number]>JSON.parse(uri.query);
+        const fileList = await this.executor.runSearch(symbol, functionIndex);
+        resultDoc = new FindResultDoc(uri, fileList);
+
         return resultDoc;
     }
 
@@ -61,7 +59,7 @@ export default class SearchResultProvider implements
             reject();
         });
     }
-    
+
 }
 
 export function openSearch(brief:string, functionIndex:number, columnMode : boolean) {
@@ -72,10 +70,11 @@ export function openSearch(brief:string, functionIndex:number, columnMode : bool
             const document = vscode.window.activeTextEditor.document;
             const symbol = document.getText(document.getWordRangeAtPosition(position));
 
-            vscode.window.showInputBox({ value: symbol, prompt: "Enter the text", 
+            vscode.window.showInputBox({ value: symbol, prompt: "Enter the text",
                                         placeHolder: "", password: false }).then( (info) => {
                 if (info !== undefined && info.length > 0) {
-                    const query = JSON.stringify([brief, info, functionIndex]);
+                    const cacheBreaker = Math.floor(Math.random() * 10);
+                    const query = JSON.stringify([brief, info, functionIndex, cacheBreaker]);
                     let docUri = vscode.Uri.parse(`${SearchResultProvider.scheme}:${info}.find ?${query}`);
                     let viewColumn = vscode.window.activeTextEditor.viewColumn;
                     if (columnMode)
